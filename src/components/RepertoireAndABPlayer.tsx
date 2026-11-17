@@ -62,6 +62,8 @@ export const RepertoireAndABPlayer: React.FC<RepertoireAndABPlayerProps> = ({
   computedRef.current = computed;
   const splitKeyModeRef = useRef<SplitKeyMode>(splitKeyMode);
   splitKeyModeRef.current = splitKeyMode;
+  const loopEnabledRef = useRef<boolean>(loopEnabled);
+  loopEnabledRef.current = loopEnabled;
 
   const selectedPiece: RepertoirePiece =
     HISTORICAL_REPERTOIRE.find((p) => p.id === selectedPieceId) ??
@@ -182,7 +184,7 @@ export const RepertoireAndABPlayer: React.FC<RepertoireAndABPlayerProps> = ({
           const nextIdx = stepIdx + 1;
           if (nextIdx < piece.steps.length) {
             triggerStep(piece, nextIdx, true);
-          } else if (loopEnabled) {
+          } else if (loopEnabledRef.current) {
             triggerStep(piece, 0, true);
           } else {
             setIsPlaying(false);
@@ -192,7 +194,7 @@ export const RepertoireAndABPlayer: React.FC<RepertoireAndABPlayerProps> = ({
         }, step.durationMs);
       }
     },
-    [loopEnabled, resolveStepFrequencies, onPlayStepNotes, onStopAll]
+    [resolveStepFrequencies, onPlayStepNotes, onStopAll]
   );
 
   const handleStop = useCallback(() => {
