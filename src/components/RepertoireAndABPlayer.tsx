@@ -186,6 +186,7 @@ export const RepertoireAndABPlayer: React.FC<RepertoireAndABPlayerProps> = ({
             triggerStep(piece, 0, true);
           } else {
             setIsPlaying(false);
+            setCurrentStepIndex(0);
             onStopAll();
           }
         }, step.durationMs);
@@ -201,6 +202,7 @@ export const RepertoireAndABPlayer: React.FC<RepertoireAndABPlayerProps> = ({
     }
     setIsPlaying(false);
     setIsPausedOnStep(false);
+    setCurrentStepIndex(0);
     onStopAll();
   }, [onStopAll]);
 
