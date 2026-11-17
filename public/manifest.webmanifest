@@ -1,0 +1,10 @@
+{
+  "name": "Clavier & Organ Temperament Lab",
+  "short_name": "Temperament Lab",
+  "description": "Interactive historical tuning & temperament workbench for harpsichord, organ, and early keyboards",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0d0a",
+  "theme_color": "#0f0d0a",
+  "orientation": "any"
+}
