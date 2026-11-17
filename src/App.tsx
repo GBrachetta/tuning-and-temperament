@@ -739,17 +739,18 @@ export function App() {
                 <h1 className="font-serif text-base sm:text-lg font-bold tracking-tight text-[#f5efe6] whitespace-nowrap">
                   Clavier & Organ Temperament Lab
                 </h1>
-                {activeNotesMap.size > 0 && (
-                  <button
-                    onClick={handleStopAll}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500 hover:bg-red-400 text-white text-xs font-bold shadow-sm transition-colors whitespace-nowrap"
-                    title="Silence all sounding notes (or press Esc)"
-                  >
-                    <Square className="w-3 h-3 fill-current" />
-                    Stop ({activeNotesMap.size})
-                  </button>
-                )}
-                {midiStatus && activeNotesMap.size === 0 && (
+                <button
+                  onClick={handleStopAll}
+                  disabled={activeNotesMap.size === 0}
+                  className={`w-[84px] justify-center inline-flex items-center gap-1 py-1 rounded-lg bg-red-500 hover:bg-red-400 text-white text-xs font-bold shadow-sm transition-colors whitespace-nowrap ${
+                    activeNotesMap.size > 0 ? '' : 'invisible'
+                  }`}
+                  title="Silence all sounding notes (or press Esc)"
+                >
+                  <Square className="w-3 h-3 fill-current" />
+                  Stop{activeNotesMap.size > 0 ? ` (${activeNotesMap.size})` : ''}
+                </button>
+                {midiStatus && (
                   <span className="hidden xl:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-medium whitespace-nowrap">
                     <Radio className="w-3 h-3 animate-pulse" />
                     {midiStatus}
@@ -961,54 +962,64 @@ export function App() {
               }
             />
 
-            <div className="bg-[#17130e] border border-[#332a1d] rounded-2xl p-3.5 sm:px-5 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 flex-wrap">
+            {/* Fixed-height monitor: content changes, size never does */}
+            <div className="bg-[#17130e] border border-[#332a1d] rounded-2xl px-3.5 py-3 sm:px-5 flex flex-col gap-2">
+              <div className="flex flex-nowrap items-center gap-2.5 h-7 min-w-0">
                 <Activity
-                  className={`w-4 h-4 ${
+                  className={`w-4 h-4 shrink-0 ${
                     activeNotesSorted.length > 0
                       ? 'text-emerald-400 animate-pulse'
                       : 'text-[#7d6f5d]'
                   }`}
                 />
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#c2b29b]">
-                  Live Acoustic Monitor:
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#c2b29b] whitespace-nowrap shrink-0">
+                  Live Monitor:
                 </span>
-                {activeNotesSorted.length === 0 ? (
-                  <span className="text-xs text-[#8c7d69]">
-                    Play any chord on the manual or tap an interval on the wheel to inspect harmonics & beats
-                  </span>
-                ) : (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {activeNotesSorted.map((n) => (
+                <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto min-w-0 flex-1">
+                  {activeNotesSorted.length === 0 ? (
+                    <span className="text-xs text-[#8c7d69] whitespace-nowrap truncate">
+                      Play a key, chord or interval to see frequencies and beats
+                    </span>
+                  ) : (
+                    activeNotesSorted.map((n) => (
                       <span
                         key={n.noteKey}
-                        className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/40 text-xs font-mono font-bold"
+                        className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/40 text-xs font-mono font-bold whitespace-nowrap shrink-0"
                       >
                         {n.label} ({n.freqHz.toFixed(1)} Hz)
                       </span>
-                    ))}
-                    <button
-                      onClick={handleStopAll}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/25 hover:bg-red-500/40 text-red-200 border border-red-500/40 text-xs font-semibold transition-colors ml-1"
-                    >
-                      <Square className="w-2.5 h-2.5 fill-current" />
-                      Stop
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {liveDyadMetrics && (
-                <div className="flex items-center gap-3 bg-[#100d09] px-3 py-1.5 rounded-xl border border-[#2c2419] text-xs font-mono">
-                  <span className="text-amber-300 font-bold">{liveDyadMetrics.intervalName}:</span>
-                  <span className="text-[#f5efe6]">{liveDyadMetrics.devLabel}</span>
-                  {liveDyadMetrics.beatsHz !== null && (
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">
-                      Beats: {liveDyadMetrics.beatsHz.toFixed(2)} Hz
-                    </span>
+                    ))
                   )}
                 </div>
-              )}
+                <button
+                  onClick={handleStopAll}
+                  disabled={activeNotesSorted.length === 0}
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
+                    activeNotesSorted.length > 0
+                      ? 'bg-red-500/25 hover:bg-red-500/40 text-red-200 border-red-500/40'
+                      : 'invisible'
+                  }`}
+                >
+                  <Square className="w-2.5 h-2.5 fill-current" />
+                  Stop
+                </button>
+              </div>
+
+              <div className="flex flex-nowrap items-center gap-3 h-8 bg-[#100d09] px-3 rounded-xl border border-[#2c2419] text-xs font-mono overflow-x-auto whitespace-nowrap">
+                {liveDyadMetrics ? (
+                  <>
+                    <span className="text-amber-300 font-bold shrink-0">{liveDyadMetrics.intervalName}:</span>
+                    <span className="text-[#f5efe6] shrink-0">{liveDyadMetrics.devLabel}</span>
+                    {liveDyadMetrics.beatsHz !== null && (
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold shrink-0">
+                        Beats: {liveDyadMetrics.beatsHz.toFixed(2)} Hz
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-[#5e5243]">Interval analysis appears when two or more notes sound</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
